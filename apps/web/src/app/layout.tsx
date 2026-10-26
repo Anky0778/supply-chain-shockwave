@@ -39,8 +39,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </header>
         <main className="mx-auto max-w-7xl px-4 py-8">{children}</main>
         <footer className="border-t border-rule">
-          <p className="meta mx-auto max-w-7xl px-4 py-4">
-            Historical data and model estimates are labelled separately. Not financial advice.
+          <p className="mx-auto max-w-7xl px-4 py-4 text-xs text-ink-2">
+            Prices are monthly benchmark averages, not live quotes. Forecasts are statistical estimates.
           </p>
         </footer>
       </body>

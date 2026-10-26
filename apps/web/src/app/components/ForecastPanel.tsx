@@ -44,11 +44,7 @@ export default function ForecastPanel({ data }: { data: ForecastData | null }) {
   return (
     <div>
       <p className="mt-2 max-w-3xl text-sm">{data.summary}</p>
-      <p className="mt-2 max-w-3xl text-sm text-ink-2">
-        How to read the cards: each bar shows where the price ended up compared with today (the vertical line) in
-        8 out of 10 past cases. A wider bar means more uncertainty. A dot appears only if a tested method showed
-        real skill.
-      </p>
+      
 
       <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {rows.map((h) => (
@@ -91,8 +87,12 @@ export default function ForecastPanel({ data }: { data: ForecastData | null }) {
       </div>
 
       <details className="mt-6 border-t border-rule pt-3">
-        <summary className="meta cursor-pointer">How we tested this (for the curious)</summary>
+        <summary className="meta cursor-pointer">How to read this, and how it was tested</summary>
         <div className="mt-3 max-w-3xl space-y-2 text-sm text-ink-2">
+          <p>
+            Each bar shows where the price ended up, compared with today (the vertical line), in 8 out of 10 past
+            cases. A wider bar means more uncertainty. A dot appears only if a tested method showed real skill.
+          </p>
           <p>
             For every past month we asked: using only what was known then, what would each method have predicted?
             We then compared the predictions with what actually happened. The &ldquo;baseline&rdquo; method simply assumes

@@ -13,6 +13,7 @@ export type DriversData = {
   items: Driver[];
   reason?: string;
   ai_note?: string;
+  ai_pending?: boolean;
   tested_against?: number;
 };
 
@@ -66,13 +67,19 @@ export default function DriversPanel({ data, targetName }: { data: DriversData |
     <section className="mt-10 border-t border-ink pt-3">
       <p className="meta">What it moves with · linked prices · measured from the last 10 years</p>
       {data.ai_note && <p className="mt-2 text-sm text-ink-2">{data.ai_note}</p>}
+      {data.ai_pending && (
+        <p className="mt-2 text-sm text-ink-2">
+          The economic reasons for this commodity are still being prepared. Refresh in about 15 seconds to see
+          them. The measured links below are already computed from the data.
+        </p>
+      )}
 
       {ai.length > 0 && (
         <>
           <p className="mt-3 max-w-3xl text-sm text-ink-2">
-            <strong>Proposed by AI, then tested on the data.</strong> An AI model suggested these links and the
-            economic reason for each. The measured strength below comes from the actual price history, and a
-            weak result is shown as weak.
+            <strong>Proposed links, tested on the data.</strong> These are plausible economic links, each with
+            its reason. The measured strength below comes from the actual price history, and a weak result is
+            shown as weak.
           </p>
           <div className="mt-4 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {ai.map((d) => <Card key={d.slug} d={d} target={target} />)}
@@ -84,7 +91,7 @@ export default function DriversPanel({ data, targetName }: { data: DriversData |
         <>
           <p className="mt-8 max-w-3xl text-sm text-ink-2">
             <strong>Also found in the data.</strong> Strongest statistical links among the other{" "}
-            {data.tested_against} price series that the AI did not suggest. With this many comparisons, some links
+            {data.tested_against} price series that are not listed above. With this many comparisons, some links
             appear by chance, so treat these as leads, not explanations.
           </p>
           <div className="mt-4 grid gap-6 md:grid-cols-2 lg:grid-cols-3">

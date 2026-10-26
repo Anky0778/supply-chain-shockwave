@@ -85,8 +85,8 @@ export default async function Home() {
             labelled as an estimate.
           </p>
           <p className="mt-4 max-w-2xl text-sm text-ink-2">
-            Not a trading tool. It does not show live prices, predict wars, or tell you what to buy. The data
-            is monthly.
+            Prices are monthly benchmark averages, not live quotes. This is research, not trading or investment
+            advice.
           </p>
         </div>
 
@@ -97,7 +97,7 @@ export default async function Home() {
             [
               "03",
               "See who feels it",
-              "Which industries use the material, with sourced figures only. AI-suggested items are clearly marked.",
+              "Which industries and everyday products feel the change, with a source shown wherever figures are used.",
             ],
           ].map(([n, t, d]) => (
             <li key={n} className="flex gap-4">
@@ -112,7 +112,7 @@ export default async function Home() {
       </section>
 
       <section className="mt-10 border-y border-rule py-3">
-        <p className="meta">
+        <p className="meta normal-case">
           {overview
             ? `${overview.count} commodities with price history · ${overview.total_products} products catalogued · latest data ${overview.latest_date?.slice(0, 7)} · monthly averages, USD · source: World Bank Pink Sheet`
             : "Data unavailable"}

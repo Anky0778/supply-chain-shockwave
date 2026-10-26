@@ -1,19 +1,19 @@
 from datetime import date
 
-from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import desc, func, select
 from sqlalchemy.orm import Session
 
 from .analytics import compute_insights
 from .config import settings
-from .db import get_db
 from .driver_ai import generate_links
 from .drivers import compute_drivers
 from .forecasting import run_forecasts
 from .models import (CountryMetric, DriverLink, MaterialCandidate, PriceObservation, Product,
                      ProductDependency, ProductMaterialContent)
-
+from .impact_ai import claim, generate_impact
+from .db import SessionLocal, get_db
 app = FastAPI(title="Supply Chain Shockwave API")
 app.add_middleware(
     CORSMiddleware,
@@ -295,25 +295,32 @@ def get_overview(db: Session = Depends(get_db)):
 _DRIVER_ATTEMPTED: set = set()
 
 
+def _generate_links_bg(slug: str) -> None:
+    with SessionLocal() as s:
+        try:
+            p = s.scalar(select(Product).where(Product.slug == slug))
+            if p is not None:
+                generate_links(s, p)
+        except Exception:
+            s.rollback()
+            _DRIVER_ATTEMPTED.discard(slug)  # allow another try on a later visit
+
+
 @app.get("/products/{slug}/drivers")
-def get_drivers(slug: str, db: Session = Depends(get_db)):
+def get_drivers(slug: str, background: BackgroundTasks, db: Session = Depends(get_db)):
     p = db.scalar(select(Product).where(Product.slug == slug))
     if not p:
         raise HTTPException(404, f"Product '{slug}' not found")
     if not p.has_price_series:
         return {"configured": False, "items": []}
 
-    ai_note = None
     count = db.scalar(select(func.count()).select_from(DriverLink).where(DriverLink.target_id == p.id))
-    if not count and slug not in _DRIVER_ATTEMPTED:
-        _DRIVER_ATTEMPTED.add(slug)
-        try:
-            generate_links(db, p)
-        except Exception as exc:
-            db.rollback()
-            if "429" in str(exc):
-                _DRIVER_ATTEMPTED.discard(slug)  # rate-limited: allow a retry on the next visit
-            ai_note = "AI suggestions are unavailable right now. Showing statistical links only."
+    ai_pending = False
+    if not count:
+        ai_pending = True
+        if slug not in _DRIVER_ATTEMPTED:
+            _DRIVER_ATTEMPTED.add(slug)
+            background.add_task(_generate_links_bg, slug)
 
     links = db.execute(
         select(DriverLink, Product)
@@ -334,8 +341,8 @@ def get_drivers(slug: str, db: Session = Depends(get_db)):
 
     cfg = [(prod.slug, link.mechanism, link.relation, "ai") for link, prod in links]
     out = compute_drivers(slug, cfg, series, {x.slug: x.name for x in priced})
-    if ai_note:
-        out["ai_note"] = ai_note
+    if ai_pending:
+        out["ai_pending"] = True
     return out
 
 
@@ -391,3 +398,30 @@ def get_country_exposure(slug: str, db: Session = Depends(get_db)):
         "source_name": src.source_name,
         "source_url": src.source_url,
     }
+
+@app.get("/products/{slug}/impact")
+def get_impact(slug: str, background: BackgroundTasks, db: Session = Depends(get_db)):
+    p = db.scalar(select(Product).where(Product.slug == slug))
+    if not p:
+        raise HTTPException(404, f"Product '{slug}' not found")
+    rows = db.scalars(
+        select(MaterialCandidate)
+        .where(MaterialCandidate.material_id == p.id)
+        .order_by(MaterialCandidate.ai_rank)
+    ).all()
+    if rows:
+        return {
+            "status": "ready",
+            "model": rows[0].model,
+            "generated_at": rows[0].generated_at.isoformat(),
+            "items": [
+                {"ai_rank": r.ai_rank, "downstream_product": r.downstream_product, "why": r.why,
+                 "link_type": r.link_type, "delay": r.delay}
+                for r in rows
+            ],
+        }
+    action = claim(slug)
+    if action == "start":
+        background.add_task(generate_impact, slug)
+        return {"status": "generating", "items": []}
+    return {"status": action, "items": []}

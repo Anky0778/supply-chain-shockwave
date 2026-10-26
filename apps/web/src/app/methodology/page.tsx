@@ -39,12 +39,11 @@ export default function Methodology() {
         export ban or a war, which is why current evidence is shown beside them.
       </p>
 
-      <h2 className={h}>What the AI does and does not do</h2>
+      <h2 className={h}>Written background notes</h2>
       <p className={p}>
-        An AI model writes plain-language background on how a commodity can reach everyday products. It contains no
-        figures, is labelled unverified, and feeds no calculation. Quantities used in &ldquo;Products affected&rdquo; come
-        only from sources linked beside each row. Planned: the AI will summarise supply and news evidence, citing
-        every source it uses.
+        The notes on how a commodity reaches everyday products are generated automatically by a language model from
+        the commodity&apos;s measured price history Quantities used in &ldquo;Products affected&rdquo; come only from sources linked beside each
+        row.
       </p>
 
       <h2 className={h}>Limits</h2>

@@ -122,9 +122,8 @@ def run_forecasts(points, unit):
         summary = ("A tested model beat the no-change baseline at these horizons (months): "
                    + ", ".join(map(str, beats)) + ". Elsewhere there is no reliable directional signal.")
     else:
-        summary = ("No tested model beat a simple no-change baseline at any horizon in backtesting. "
-                   "The ranges show how far this price has typically moved over each horizon. They are "
-                   "not a prediction of direction.")
+        summary = ("No tested method beat a simple \"no change\" forecast, so no direction is shown. "
+                   "The ranges show how far this price has typically moved over each horizon.")
     return {
         "supported": True,
         "model_version": MODEL_VERSION,

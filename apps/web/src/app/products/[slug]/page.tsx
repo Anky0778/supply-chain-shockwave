@@ -4,9 +4,10 @@ import PriceChart from "../../components/PriceChart";
 import ExposurePanel from "../../components/ExposurePanel";
 import ForecastPanel, { type ForecastData } from "../../components/ForecastPanel";
 import Verdict from "../../components/Verdict";
-import EverydayImpact, { type EverydayData } from "../../components/EverydayImpact";
+import EverydayImpactLive from "../../components/EverydayImpactLive";
 import DriversPanel, { type DriversData } from "../../components/DriversPanel";
 import CountryExposure, { type CountryExposureData } from "../../components/CountryExposure";
+
 const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 type Product = {
@@ -57,12 +58,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const product = await getJson<Product>(`/products/${slug}`);
   if (!product) notFound();
 
-  const [prices, insights, deps, exposure, everyday, forecast, drivers, countryExposure] = await Promise.all([
+  const [prices, insights, deps, exposure, forecast, drivers, countryExposure] = await Promise.all([
     product.has_price_series ? getJson<Prices>(`/products/${slug}/prices`) : null,
     product.has_price_series ? getJson<Insights>(`/products/${slug}/insights`) : null,
     getJson<Dependency[]>(`/products/${slug}/dependencies`),
     product.has_price_series ? getJson<Exposure>(`/products/${slug}/exposure?price_change_pct=0`) : null,
-    getJson<EverydayData>(`/products/${slug}/candidates`),
     product.has_price_series ? getJson<ForecastData>(`/products/${slug}/forecast`) : null,
     product.has_price_series ? getJson<DriversData>(`/products/${slug}/drivers`) : null,
     getJson<CountryExposureData>(`/products/${slug}/country-exposure`),
@@ -134,10 +134,12 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </p>
       )}
 
-      <EverydayImpact data={everyday} materialName={product.name} />
+      <EverydayImpactLive slug={product.slug} materialName={product.name} />
 
       {priced && <DriversPanel data={drivers} targetName={product.name} />}
-            <CountryExposure data={countryExposure} materialName={product.name} />
+
+      <CountryExposure data={countryExposure} materialName={product.name} />
+
       {priced && (
         <section className="mt-10 border-t border-ink pt-3">
           <p className="meta">Forecast · model estimate, not measured fact</p>
@@ -202,16 +204,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </section>
       )}
 
-      {!hasExposure && !hasDeps && (
-        <p className="meta mt-10 border-t border-rule pt-3 normal-case">
-          No sourced material-content or demand-sector figures are recorded for this product yet. They are added
-          only when backed by a published source.
-        </p>
-      )}
-
-      {priced && prices && (
-        <p className="meta mt-8">
-          Measured historical data · {prices.basis} · {prices.unit} · Source: {prices.source}
+      {priced && prices && latest && (
+        <p className="mt-10 border-t border-rule pt-3 text-xs text-ink-2">
+          Source: {prices.source}. {prices.basis}, {prices.unit}. Monthly data, latest {latest.date.slice(0, 7)};
+          not live prices.
         </p>
       )}
     </article>
