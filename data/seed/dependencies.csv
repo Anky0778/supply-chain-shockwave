@@ -1,0 +1,4 @@
+material_slug,downstream_name,kind,share_pct,geography,reference_label,source_name,source_url,confidence,note
+copper,Building construction,end_use_sector,42,United States,USGS MCS 2026,"USGS Mineral Commodity Summaries: Copper (Feb 2026), citing Copper Development Association",https://pubs.usgs.gov/periodicals/mcs2026/mcs2026-copper.pdf,high,US end-use shares only; not a global figure
+copper,Electrical and electronic products,end_use_sector,23,United States,USGS MCS 2026,"USGS Mineral Commodity Summaries: Copper (Feb 2026), citing Copper Development Association",https://pubs.usgs.gov/periodicals/mcs2026/mcs2026-copper.pdf,high,US end-use shares only; not a global figure
+copper,Transportation equipment,end_use_sector,,United States,USGS MCS 2026,"USGS Mineral Commodity Summaries: Copper (Feb 2026), citing Copper Development Association",https://pubs.usgs.gov/periodicals/mcs2026/mcs2026-copper.pdf,high,Listed by USGS; percentage not yet transcribed

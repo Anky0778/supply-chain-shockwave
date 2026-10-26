@@ -1,0 +1,5 @@
+Terminal	Folder	                Command
+Backend	    apps\api (venv active)	uvicorn app.main:app --reload
+Frontend	apps\web	            npm run dev
+
+

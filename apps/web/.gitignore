@@ -1,0 +1,132 @@
+import Link from "next/link";
+import Catalogue, { type OverviewItem, type TradeOnly } from "../components/Catalogue";
+
+const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+
+type Overview = { count: number; total_products: number; latest_date: string | null; items: OverviewItem[] };
+type ProductRow = { slug: string; name: string; category: string; hs_code: string | null; has_price_series: boolean };
+
+async function getJson<T>(path: string): Promise<T | null> {
+  try {
+    const res = await fetch(`${API}${path}`, { cache: "no-store" });
+    return res.ok ? ((await res.json()) as T) : null;
+  } catch {
+    return null;
+  }
+}
+
+function Movers({ title, rows, note }: { title: string; rows: { slug: string; name: string; value: string }[]; note: string }) {
+  return (
+    <div className="border-t border-ink pt-3">
+      <p className="meta">{title}</p>
+      <ul className="mt-2 divide-y divide-rule text-sm">
+        {rows.map((r) => (
+          <li key={r.slug} className="flex justify-between py-1.5">
+            <Link href={`/products/${r.slug}`} className="hover:text-signal">
+              {r.name}
+            </Link>
+            <span className="font-mono">{r.value}</span>
+          </li>
+        ))}
+      </ul>
+      <p className="meta mt-2 normal-case">{note}</p>
+    </div>
+  );
+}
+
+const pct = (n: number) => `${n >= 0 ? "+" : "−"}${Math.abs(n).toFixed(1)}%`;
+
+export default async function Home() {
+  const [overview, products] = await Promise.all([
+    getJson<Overview>("/overview"),
+    getJson<ProductRow[]>("/products?limit=200"),
+  ]);
+
+  const items = overview?.items ?? [];
+  const withChange = items.filter((i) => i.change_12m_pct !== null);
+  const rises = [...withChange].sort((a, b) => b.change_12m_pct! - a.change_12m_pct!).slice(0, 4);
+  const falls = [...withChange].sort((a, b) => a.change_12m_pct! - b.change_12m_pct!).slice(0, 4);
+  const high = [...items].sort((a, b) => (b.percentile_10y ?? 0) - (a.percentile_10y ?? 0)).slice(0, 4);
+  const tradeOnly: TradeOnly[] = (products ?? []).filter((p) => !p.has_price_series);
+
+  return (
+    <div>
+      <section className="grid gap-10 lg:grid-cols-5">
+        <div className="lg:col-span-3">
+          <p className="meta">Global commodity intelligence</p>
+          <h1 className="mt-2 font-serif text-5xl leading-[1.05] tracking-tight">
+            What is the price of the raw materials behind everyday things doing, and why does it matter?
+          </h1>
+          <p className="mt-5 max-w-2xl text-lg text-ink-2">
+            Copper is in your wiring, oil is in your transport costs, wheat is in your bread. Supply Chain
+            Shockwave shows how these prices have moved over decades, how unusual today&apos;s price is, and
+            which industries feel the change. Every number comes from a named source, and every estimate is
+            labelled as an estimate.
+          </p>
+          <p className="mt-4 max-w-2xl text-sm text-ink-2">
+            Not a trading tool. It does not show live prices, predict wars, or tell you what to buy. The data is
+            monthly.
+          </p>
+        </div>
+
+        <ol className="space-y-5 border-t border-ink pt-3 lg:col-span-2 lg:border-l lg:border-t-0 lg:pl-8">
+          {[
+            ["01", "See if a price is high or low", "Compare today with 10 years of history, in plain words."],
+            ["02", "See how much it can swing", "How far prices have typically moved over 6 months to 5 years."],
+            ["03", "See who feels it", "Which industries use the material, with sourced figures only. AI-suggested items are clearly marked."],
+          ].map(([n, t, d]) => (
+            <li key={n} className="flex gap-4">
+              <span className="font-mono text-ink-2">{n}</span>
+              <div>
+                <p className="font-medium">{t}</p>
+                <p className="text-sm text-ink-2">{d}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section className="mt-10 border-y border-rule py-3">
+        <p className="meta">
+          {overview
+            ? `${overview.count} commodities with price history · ${overview.total_products} products catalogued · latest data ${overview.latest_date?.slice(0, 7)} · monthly averages, USD · source: World Bank Pink Sheet`
+            : "Data unavailable"}
+        </p>
+      </section>
+
+      {!overview ? (
+        <p className="mt-6 border border-rule p-4 text-sm">
+          The API is unreachable. Start it with <code>uvicorn app.main:app --reload</code> in apps\api.
+        </p>
+      ) : (
+        <>
+          <section className="mt-10 grid gap-8 md:grid-cols-3">
+            <Movers
+              title="Rose most in the last 12 months"
+              rows={rises.map((r) => ({ slug: r.slug, name: r.name, value: pct(r.change_12m_pct!) }))}
+              note="Measured: latest month vs 12 months earlier."
+            />
+            <Movers
+              title="Fell most in the last 12 months"
+              rows={falls.map((r) => ({ slug: r.slug, name: r.name, value: pct(r.change_12m_pct!) }))}
+              note="Measured: latest month vs 12 months earlier."
+            />
+            <Movers
+              title="Highest compared with their own 10-year history"
+              rows={high.map((r) => ({ slug: r.slug, name: r.name, value: `${(r.percentile_10y ?? 0).toFixed(0)}th pct.` }))}
+              note="Share of the last 10 years' monthly prices that were lower."
+            />
+          </section>
+
+          <section id="catalogue" className="mt-12 scroll-mt-6">
+            <p className="meta">All commodities</p>
+            <h2 className="font-serif text-3xl tracking-tight">Find a commodity</h2>
+            <div className="mt-4">
+              <Catalogue items={items} tradeOnly={tradeOnly} />
+            </div>
+          </section>
+        </>
+      )}
+    </div>
+  );
+}

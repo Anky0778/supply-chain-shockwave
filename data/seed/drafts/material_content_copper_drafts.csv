@@ -1,0 +1,11 @@
+material_slug,downstream_product,unit_basis,kg_per_unit,reference_year,source_name,source_url,note,AI_why_UNVERIFIED,AI_estimate_UNVERIFIED
+copper,Building electrical wiring (residential/commercial),per average building,,,,,,Copper is used for conductors in building wiring systems to distribute electricity safely.,300-800 kg
+copper,Power transmission and distribution cables,per kilometer of 3‑core 33 kV cable,,,,,,Copper conductors carry high‑voltage electricity over long distances in overhead and underground lines.,150-250 kg
+copper,Automotive wiring harnesses,per passenger vehicle,,,,,,"Copper wires interconnect sensors, control units, and power systems in vehicles.",30-60 kg
+copper,Electric motors (industrial and commercial),per 100 kW motor,,,,,,Copper windings create magnetic fields that drive motor rotation.,15-30 kg
+copper,Printed circuit boards (PCBs) for consumer electronics,per smartphone,,,,,,Copper traces form the electrical pathways on PCBs.,0.02-0.05 kg
+copper,Solar photovoltaic (PV) modules and balance‑of‑system components,per megawatt of installed PV capacity,,,,,,"Copper is used in cell interconnect ribbons, busbars, and wiring for PV arrays.","5,000-8,000 kg"
+copper,Wind turbine generators,per 2 MW wind turbine,,,,,,Copper windings in the generator stator convert mechanical energy to electricity.,"8,000-12,000 kg"
+copper,Telecommunications equipment (copper cable networks),per kilometer of fiber‑to‑the‑home copper drop,,,,,,Copper twisted‑pair cables transmit voice and data signals in telecom infrastructure.,30-50 kg
+copper,"HVAC (heating, ventilation, and air‑conditioning) systems",per residential HVAC unit,,,,,,Copper tubing and coils transfer heat efficiently in refrigeration cycles.,10-25 kg
+copper,Electric vehicle (EV) battery pack interconnects and charging infrastructure,per EV battery pack,,,,,,Copper conductors link battery cells and provide high‑current pathways for charging stations.,5-15 kg

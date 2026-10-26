@@ -1,0 +1,29 @@
+slug,name,category,product_type,hs_code,price_unit
+copper,Copper (refined),Metals,benchmark_commodity,7403,USD/mt
+aluminium,Aluminium (unwrought),Metals,benchmark_commodity,7601,USD/mt
+nickel,Nickel (unwrought),Metals,benchmark_commodity,7502,USD/mt
+zinc,Zinc (unwrought),Metals,benchmark_commodity,7901,USD/mt
+tin,Tin (unwrought),Metals,benchmark_commodity,8001,USD/mt
+lead,Lead (unwrought),Metals,benchmark_commodity,7801,USD/mt
+iron-ore,Iron ore,Metals,benchmark_commodity,2601,USD/dmtu
+gold,Gold,Precious metals,benchmark_commodity,7108,USD/troy oz
+silver,Silver,Precious metals,benchmark_commodity,7106,USD/troy oz
+platinum,Platinum,Precious metals,benchmark_commodity,7110,USD/troy oz
+crude-oil,Crude oil,Energy,benchmark_commodity,2709,USD/bbl
+natural-gas,Natural gas,Energy,benchmark_commodity,2711,USD/mmbtu
+coal,Coal,Energy,benchmark_commodity,2701,USD/mt
+wheat,Wheat,Agriculture,benchmark_commodity,1001,USD/mt
+maize,Maize (corn),Agriculture,benchmark_commodity,1005,USD/mt
+rice,Rice,Agriculture,benchmark_commodity,1006,USD/mt
+soybeans,Soybeans,Agriculture,benchmark_commodity,1201,USD/mt
+palm-oil,Palm oil,Agriculture,benchmark_commodity,1511,USD/mt
+sugar,Sugar,Agriculture,benchmark_commodity,1701,USD/kg
+coffee,Coffee,Agriculture,benchmark_commodity,0901,USD/kg
+cocoa,Cocoa,Agriculture,benchmark_commodity,1801,USD/kg
+cotton,Cotton,Agriculture,benchmark_commodity,5201,USD/kg
+rubber,Natural rubber,Agriculture,benchmark_commodity,4001,USD/kg
+urea,Urea (fertiliser),Fertilisers,benchmark_commodity,3102,USD/mt
+lithium-carbonate,Lithium carbonate,Battery materials,trade_product,283691,
+cobalt,Cobalt,Battery materials,trade_product,8105,
+semiconductors,Semiconductors (integrated circuits),Electronics,trade_product,8542,
+lithium-ion-batteries,Lithium-ion batteries,Electronics,trade_product,850760,
